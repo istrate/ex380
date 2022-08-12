@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app2048-deploy
+  namespace: opengame
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      deployment: app2048-deploy
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        openshift.io/generated-by: OpenShiftNewApp
+      creationTimestamp: null
+      labels:
+        deployment: app2048-deploy
+    spec:
+      containers:
+      - image: alexwhen/docker-2048
+        imagePullPolicy: IfNotPresent
+        name: app2048-deploy
+        ports:
+        - containerPort: 80
+          protocol: TCP
+      serviceAccount: appcred
+      serviceAccountName: appcred
