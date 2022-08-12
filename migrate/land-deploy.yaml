@@ -1,0 +1,20 @@
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  name: landing
+  namespace: opengame
+spec:
+  replicas: 1
+  selector:
+    deploymentconfig: landing
+  template:
+    metadata:
+      labels:
+        deploymentconfig: landing
+    spec:
+      containers:
+      - image: quay.io/amkhan_16nw/redhat-landing
+        name: landing
+        ports:
+        - containerPort: 80
+          protocol: TCP
