@@ -1,0 +1,39 @@
+---
+apiVersion: project.openshift.io/v1
+kind: Project
+metadata:
+  name: catalog
+spec:
+  finalizers:
+  - kubernetes
+...
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redbase
+  namespace: catalog
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      deployment: redbase
+  template:
+    metadata:
+      labels:
+        deployment: redbase
+    spec:
+      containers:
+      - image: quay.io/redhattraining/hello-world-nginx@sha256:7f99ece5f39bf8d5d76a43cd9104a8d0a39f7135821b94bc1ebdc39cdc6dd63b
+        name: redbase
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 32m
+          requests:
+            cpu: 32m
+      nodeSelector:
+        base: alpha
