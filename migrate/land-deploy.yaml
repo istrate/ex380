@@ -2,7 +2,7 @@ apiVersion: apps.openshift.io/v1
 kind: DeploymentConfig
 metadata:
   name: landing
-  namespace: opengame
+  namespace: landing
 spec:
   replicas: 1
   selector:
