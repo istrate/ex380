@@ -1,0 +1,74 @@
+- name: Create 2048 internet video game 
+  hosts: localhost
+  become: false
+  vars:
+    namespace: opengame
+  module_defaults:
+    group/k8s:
+      namespace: "{{ namespace }}"
+      ca_cert: "/etc/pki/tls/certs/ca-bundle.crt"
+  tasks:
+    - name: Create the project
+      k8s:
+        api_version: project.openshift.io/v1
+        kind: Project
+        name: "{{ namespace }}"
+        state: present
+        namespace: ""
+
+    - name: Create serviceaccount object from the manifest
+      k8s:
+        state: present
+        src: "{{ playbook_dir + '/2048-serviceaccount.yaml' }}"
+
+    - name: Create rbac object from the manifest
+      k8s:
+        state: present
+        src: "{{ playbook_dir + '/2048-rbac.yaml' }}"
+
+
+    - name: Create deployment objects from the manifest
+      k8s:
+        state: present
+        src: "{{ playbook_dir + '/2048-deploy.yaml' }}"
+
+
+    - name: Create service object from the manifest
+      k8s:
+        state: present
+        src: "{{ playbook_dir + '/2048-svc.yaml' }}"
+
+
+    - name: Create route objects from the manifest
+      k8s:
+        state: present
+        src: "{{ playbook_dir + '/2048-route.yaml' }}"
+
+    - name: Get a info about all of the pods in the namespace
+      k8s_info:
+        kind: Pod
+
+    - name: Scale deployment up
+      k8s_scale:
+        kind: Deployment
+        name: 'app2048-deploy'
+        replicas: 1
+
+    - name: Get hostname of the route
+      k8s_info:
+        kind: Route
+        name: 'game'
+      register: route
+
+    - name: Test access to the app
+      uri:
+        url: "http://{{ route.resources[0].spec.host }}"
+        return_content: yes
+      register: response
+      until: response.status == 200
+      retries: 10
+      delay: 5
+
+    - name: Display response of the application
+      debug:
+        var: response.content
