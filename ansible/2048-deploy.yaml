@@ -23,7 +23,7 @@ spec:
         deployment: app2048-deploy
     spec:
       containers:
-      - image: alexwhen/docker-2048
+      - image: quay.io/amkhan_16nw/docker-2048
         imagePullPolicy: IfNotPresent
         name: app2048-deploy
         ports:
