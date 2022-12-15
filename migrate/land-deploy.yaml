@@ -13,7 +13,7 @@ spec:
         deploymentconfig: landing
     spec:
       containers:
-      - image: quay.io/amkhan_16nw/redhat-landing
+      - image: registry.ocp4.example.com:8443/developer/redhat-landing
         name: landing
         ports:
         - containerPort: 80
