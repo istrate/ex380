@@ -5,10 +5,10 @@ metadata:
   namespace: landing
 spec:
   rules:
-    - host: example.com
+    - host: 
       http:
         paths:
-          - path: /testpath
+          - path: /landing.apps.ocp4.example.com
             backend:
               serviceName: test
               servicePort: 80
