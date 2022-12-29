@@ -10,5 +10,5 @@ spec:
         paths: landing.apps.ocp4.example.com
           - path: /
             backend:
-              serviceName: test
-              servicePort: 80
+              serviceName: landing
+              servicePort: 8080
