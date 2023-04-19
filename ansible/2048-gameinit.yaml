@@ -10,7 +10,7 @@
   tasks:
     - name: Create the project
       k8s:
-        api_version: project.openshift.io/v1
+      api_version: project.openshift.io/v1
         kind: Project
         name: "{{ namespace }}"
         state: present
@@ -18,7 +18,7 @@
 
     - name: Create objects from the manifest
       k8s:
-        state: present
+      state: present
         src: "{{ playbook_dir + '/hello.yml' }}"
 
     - name: Get a info about all of the pods in the namespace
