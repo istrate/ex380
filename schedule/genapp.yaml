@@ -1,41 +1,62 @@
 ---
-apiVersion: project.openshift.io/v1
-kind: Project
+apiVersion: v1
+kind: Namespace
 metadata:
   name: catalog
-spec:
-  finalizers:
-  - kubernetes
-...
+apiVersion: v1
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: redbase
+  name: redis
   namespace: catalog
 spec:
   replicas: 1
   revisionHistoryLimit: 10
   selector:
     matchLabels:
-      deployment: redbase
+      deployment: redis
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
   template:
     metadata:
+      annotations:
+        openshift.io/generated-by: OpenShiftNewApp
       labels:
-        deployment: redbase
+        deployment: redis
     spec:
       containers:
-      - image: quay.io/redhattraining/hello-world-nginx@sha256:7f99ece5f39bf8d5d76a43cd9104a8d0a39f7135821b94bc1ebdc39cdc6dd63b
-        name: redbase
+      - env:
+        - name: REDIS_PASSWORD
+          value: redhat
+        image: quay.io/redhattraining/redis:6.2
+        imagePullPolicy: IfNotPresent
+        name: redis
         ports:
-        - containerPort: 8080
+        - containerPort: 6379
           protocol: TCP
         resources:
           limits:
             cpu: 32m
-            memory: 32Mi
+            memory: 10Mi
           requests:
             cpu: 32m
-            memory: 32Mi
+            memory: 10Mi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /data
+          name: redis-volume-1
       nodeSelector:
         base: alpha
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - emptyDir: {}
+        name: redis-volume-1
