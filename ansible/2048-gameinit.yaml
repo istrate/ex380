@@ -5,7 +5,7 @@
     namespace: opengame
   module_defaults:
     group/k8s:
-      namespace: "{{ namespace }}"
+     namespace: "{{ namespace }}"
       ca_cert: "/etc/pki/tls/certs/ca-bundle.crt"
   tasks:
     - name: Create the project
